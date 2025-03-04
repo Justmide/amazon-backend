@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const generateRandomString = require("../middlewares/generateString");
 const sendVerificationEmail = require("../services/nodemailer/sendVerificationEmail");
+const sendConfirmedEmail = require("../services/nodemailer/sendConfirmedEmail");
 
 const signup = async (req, res) => {
   const { password, name, email } = req.body;
@@ -54,15 +55,23 @@ const verifyAccount = async (req, res) => {
             })
             return
         }
+  
         await UsersModel.findByIdAndUpdate(user._id, {isVerified:true, verificationToken:null, verificationExp:null})
 
-        res.status(200).json({
+           // send Confirmed email
+    await sendConfirmedEmail(user.email)
+
+        res.status(201).json({
             status:"success",
-            message: "congratulation! Your accout has been verified!",
+            message: "congratulation! Your account has been verified..Check your mail for confirmation!",
             user
         })
     } catch (error) {
         console.log(error)
+        res.status(500).json({
+            status: "error",
+            message: "An error occurred while verifying the account.",
+        });
     }
 }
 
@@ -101,6 +110,7 @@ const login = async (req, res) => {
       status: "success",
       message: "login successful",
       token,
+      user
     });
   } catch (error) {
     console.log(error);

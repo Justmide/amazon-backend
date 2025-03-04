@@ -10,6 +10,9 @@ const transporter = createTransport({
     auth: {
         user: process.env.app_email,
         pass: process.env.app_password
+    }, 
+    tls: {
+      rejectUnauthorized: false 
     }
 })
 

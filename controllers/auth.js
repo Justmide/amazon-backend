@@ -5,7 +5,7 @@ const generateRandomString = require("../middlewares/generateString");
 const sendVerificationEmail = require("../services/nodemailer/sendVerificationEmail");
 const sendConfirmedEmail = require("../services/nodemailer/sendConfirmedEmail");
 
-const signup = async (req, res) => {
+const signup = async (req, res, next) => {
   const { password, name, email } = req.body;
   try {
     const salt = await bcrypt.genSalt(12);
@@ -41,6 +41,7 @@ const signup = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    next(error)
   }
 };
 

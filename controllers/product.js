@@ -2,7 +2,7 @@ const Productmodel = require("../models/product")
 const sendEmail = require("../services/nodemailer/sendEmail")
 
 // add product 
-const addProduct = async (req, res) =>{
+const addProduct = async (req, res, next) =>{
     const {_id, email, name} = req.user 
     try {
         const product = await Productmodel.create({...req.body, seller:_id})
@@ -16,6 +16,10 @@ const addProduct = async (req, res) =>{
 
         sendEmail(email, name)
 
+        if(gshshg){
+
+        }
+
         res.status(201).json({
             status: "success",
             message: "product added successufully",
@@ -23,6 +27,7 @@ const addProduct = async (req, res) =>{
         })
     } catch (error) {
         console.error(error)
+        next(error)
     }
 }
 
